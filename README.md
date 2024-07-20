@@ -14,8 +14,9 @@ What are some external factors that affect the price of skins?
 What are some of the most popular and sought-after items in the game? And will they increase in value over time i.e. is there a finite amount?
 
 ## How the Data was Obtained
-Based on prior knowledge, I know that the largest skin marketplace is buff163.com. It is a Chinese website with the most users and the most "accurate" prices. However, when trying to obtain historical price data, just as in many other online marketplaces, the data is limited to recent sales within only the past week. Because of this, I decided to try and get the most data possible which after surfing the internet, can be found through Steam marketplace API endpoints. The endpoints provide data in JSON format with the structure:[DateTime, average price of sold items, number of items sold] for every hour since the skin was released. This is how I am able to obtain as much data as possible.
+Based on prior knowledge, I know that the largest skin marketplace is buff163.com. It is a Chinese website with the most users and the most "accurate" prices. However, when trying to obtain historical price data, just as in many other online marketplaces, the data is limited to recent sales within only the past week. Because of this, I decided to try and get the most data possible which after surfing the internet, can be found through Steam marketplace API endpoints. This is how I am able to obtain as much data as possible.
 
 Process to storing data in MySQL Database:
 
 ### Structure of the Data
+The endpoints provide data in JSON format with the structure:[DateTime, average price of sold items, number of items sold] for every hour since the skin was released.
