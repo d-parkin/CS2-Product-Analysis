@@ -6,8 +6,11 @@ I like to refer to Counter-Strike skins as one of the earliest forms of online c
 
 ## Research Questions
 At the end of my data analysis, I hope to answer the following questions as well as others along the way:
+
 Which products(skins) will be easy to sell in the future?
+
 What are some external factors that affect the price of skins?
+
 What are some of the most popular and sought-after items in the game? And will they increase in value over time i.e. is there a finite amount?
 
 ## How the Data was Obtained
