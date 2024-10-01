@@ -9,6 +9,9 @@ import config
 import re
 from datetime import datetime
 
+# takes 9 days right now
+startTime = datetime.now()
+
 # start by testing if I can add info from one skin to database, then 5 skins then all skins
 def getAllSkins():
     # declaring for database
@@ -37,34 +40,54 @@ def getAllSkins():
     # load steam market
     marketURL = 'https://steamcommunity.com/market/search?q=&category_730_ItemSet%5B%5D=any&category_730_ProPlayer%5B%5D=any&category_730_StickerCapsule%5B%5D=any&category_730_Tournament%5B%5D=any&category_730_TournamentTeam%5B%5D=any&category_730_Type%5B%5D=any&category_730_Weapon%5B%5D=any&appid=730'
     driver.get(marketURL)
-    time.sleep(2)
-    # click on items in the steam market
-    item = driver.find_element("xpath", '/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[2]/div[2]/div/div[1]/a[1]/div')
-    item.click()
-    # get name of item
-    Item = driver.find_element("xpath", '/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div/div[1]/div/a[2]')
-    ItemName = Item.text
-    print(ItemName)
-    # get item URL for search history
-    currentURL = driver.current_url
-    endURL = get_last_part_of_url(currentURL)
-    time.sleep(10)
-    # load sale history page
-    salesURL = 'https://steamcommunity.com/market/pricehistory/?currency=3&appid=730&market_hash_name=' + endURL
-    driver.get(salesURL)
-    payload = driver.find_element("xpath", '/html/body/pre')
-    payload_text = payload.text
-    extractedDetails = extract_price_details(payload_text)
-    # split payload into varables
-    for detail in extractedDetails:
-        DatePurchased = detail['DatePurchased']
-        HourPurchased = detail['HourPurchased']
-        AvgPrice = detail['AvgPrice']
-        Quantity = detail['Quantity']
-        insert_transactions(connection, ID, ItemName, DatePurchased, HourPurchased, AvgPrice, Quantity)
-        ID+=1
+    time.sleep(3)
 
-    time.sleep(10)
+    numItems = driver.find_element("xpath", '//*[@id="searchResults_total"]')
+    count = 0
+    # create loop to get every item from every page
+    #for i in range(1, numItems + 1):
+    for i in range(1, 5):
+
+        # 10 items per page
+        if count == 10:
+            time.sleep(10)
+            # click next page button
+            buttonShow = driver.find_element("xpath", '/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[2]/div[2]/div/div[2]/div[1]/span[3]')
+            buttonShow.click()
+            time.sleep(10)
+            count = 0
+        # click on items in the steam market
+        item = driver.find_element("xpath", f'//*[@id="result_{count}"]')
+        item.click()
+        time.sleep(10)
+        # get name of item
+        Item = driver.find_element("xpath", '//*[@id="mainContents"]/div[1]/div/a[2]')
+        ItemName = Item.text
+        print(ItemName)
+        # get item URL for search history
+        currentURL = driver.current_url
+        endURL = get_last_part_of_url(currentURL)
+        # load sale history page
+        salesURL = 'https://steamcommunity.com/market/pricehistory/?currency=3&appid=730&market_hash_name=' + endURL
+        time.sleep(10)
+        driver.get(salesURL)
+        payload = driver.find_element("xpath", '/html/body/pre')
+        payload_text = payload.text
+        extractedDetails = extract_price_details(payload_text)
+        # split payload into varables
+        for detail in extractedDetails:
+            DatePurchased = detail['DatePurchased']
+            HourPurchased = detail['HourPurchased']
+            AvgPrice = detail['AvgPrice']
+            Quantity = detail['Quantity']
+            insert_transactions(connection, ID, ItemName, DatePurchased, HourPurchased, AvgPrice, Quantity)
+            ID+=1
+
+        count += 1
+        # go back to previous page
+        driver.back()
+        driver.back()
+        time.sleep(10)
 
     
 def insert_transactions(connection, ID, ItemName, DatePurchased, HourPurchased, AvgPrice, Quantity):
@@ -134,3 +157,4 @@ db_config = {
 }
 
 getAllSkins()
+print(datetime.now() - startTime)
